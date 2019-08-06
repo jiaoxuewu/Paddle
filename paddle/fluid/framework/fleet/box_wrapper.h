@@ -22,6 +22,8 @@ limitations under the License. */
 #include "paddle/fluid/framework/fleet/boxps.h"
 #include "paddle/fluid/framework/scope.h"
 #include "paddle/fluid/platform/place.h"
+#include <glog/logging.h>
+#include "paddle/fluid/platform/gpu_info.h"
 
 namespace paddle {
 namespace framework {

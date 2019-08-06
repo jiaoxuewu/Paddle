@@ -22,14 +22,7 @@
 
 namespace paddle {
 namespace boxps {
-int FakeBoxPS::PassBegin(const std::set<uint64_t> &pass_data) {
-  printf("FakeBoxPS: Pass begin...\n");
-  for (const auto fea : pass_data) {
-    if (emb_.find(fea) == emb_.end()) {
-      emb_[fea] = std::vector<float>(hidden_size_, 0.0);
-    }
-  }
-
+void FakeBoxPS::PrintAllEmb() const {
   for (auto i = emb_.begin(); i != emb_.end(); ++i) {
     printf("%lu: ", i->first);
     for (const auto e : i->second) {
@@ -37,6 +30,15 @@ int FakeBoxPS::PassBegin(const std::set<uint64_t> &pass_data) {
     }
     printf("\n");
   }
+}
+int FakeBoxPS::PassBegin(const std::set<uint64_t> &pass_data) {
+  printf("FakeBoxPS: Pass begin...\n");
+  for (const auto fea : pass_data) {
+    if (emb_.find(fea) == emb_.end()) {
+      emb_[fea] = std::vector<float>(hidden_size_, 0.0);
+    }
+  }
+  PrintAllEmb();
   return 0;
 }
 
@@ -45,9 +47,9 @@ int FakeBoxPS::PassEnd() {
   return 0;
 }
 
-int FakeBoxPS::PullSparse(const std::vector<const uint64_t *> &keys,
-                          const std::vector<float *> &values,
-                          const std::vector<int64_t> &slot_lengths) {
+int FakeBoxPS::PullSparseCPU(const std::vector<const uint64_t *> &keys,
+                             const std::vector<float *> &values,
+                             const std::vector<int64_t> &slot_lengths) {
   printf("FakeBoxPS:begin pull sparse...\n");
   auto slot_size = keys.size();
   for (auto slot_id = 0; slot_id < slot_size; ++slot_id) {
@@ -68,10 +70,11 @@ int FakeBoxPS::PullSparse(const std::vector<const uint64_t *> &keys,
   return 0;
 }
 
-int FakeBoxPS::PushSparse(const std::vector<const uint64_t *> &keys,
-                          const std::vector<const float *> &values,
-                          const std::vector<int64_t> &slot_lengths) {
+int FakeBoxPS::PushSparseCPU(const std::vector<const uint64_t *> &keys,
+                             const std::vector<const float *> &values,
+                             const std::vector<int64_t> &slot_lengths) {
   printf("FakeBoxPS:begin push grad sparse...\n");
+  PrintAllEmb();
   auto slot_size = keys.size();
   for (auto slot_id = 0; slot_id < slot_size; ++slot_id) {
     const auto len = slot_lengths[slot_id];
@@ -89,6 +92,8 @@ int FakeBoxPS::PushSparse(const std::vector<const uint64_t *> &keys,
       }
     }
   }
+  printf("FakeBoxPS: end push grad sparse...\n");
+  PrintAllEmb();
   return 0;
 }
 }  // end namespace boxps

@@ -656,7 +656,6 @@ void MultiSlotDataset::MergeByInsId() {
   VLOG(3) << "MultiSlotDataset::MergeByInsId end";
 }
 
-<<<<<<< HEAD
 void MultiSlotDataset::GetRandomData(const std::set<uint16_t>& slots_to_replace,
                                      std::vector<Record>* result) {
   int debug_erase_cnt = 0;
@@ -817,6 +816,7 @@ void MultiSlotDataset::SlotsShuffle(
   VLOG(2) << "DatasetImpl<T>::SlotsShuffle() end"
           << ", memory data size for slots shuffle=" << input_channel_->Size()
           << ", cost time=" << timeline.ElapsedSec() << " seconds";
+}
 
 void MultiSlotDataset::PassBegin() {
   auto box_ptr = BoxWrapper::GetInstance();
