@@ -198,6 +198,11 @@ void SectionWorker::TrainFiles() {
 
     for (auto& op : ops_) {
       op->Run(*exe_scope, place_);
+			cudaError_t e_sync = cudaStreamSynchronize(dynamic_cast<platform::CUDADeviceContext*>(dev_ctx_)->stream());
+			if (e_sync != 0) {
+				LOG(FATAL) << "cudaStreamSynchronize " << cudaGetErrorString(e_sync)
+									 << " errno:" << e_sync;
+			}
     }
     exe_scope->DropKids();
     // Wait for GPU calc finising, as the cudaMemcpy and GPU calc may be in
